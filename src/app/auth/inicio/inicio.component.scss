@@ -1,0 +1,26 @@
+
+.cuadro-flotante {
+    background-color: #F3F5FA;
+    border: 2px solid #dbdbdb;
+    border-radius: 4px;
+    padding: 10px;
+    box-shadow: 0px 4px 8px rgba(0, 0, 0, 0.2);
+    text-align: center;
+    cursor: pointer;
+    h3{
+      font-size: 18px;
+    }
+  }
+
+  .cuadro-flotante:hover {
+    transform: translate(3px, 3px);
+    h3{
+      font-weight: bold;
+      font-size: 20px;
+    }
+  }
+
+  .espacio-superior{
+    margin-top: 20px;
+  }
+

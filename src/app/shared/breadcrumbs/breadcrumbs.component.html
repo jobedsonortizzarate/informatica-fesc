@@ -1,0 +1,10 @@
+<nav aria-label="breadcrumb" id="navbar">
+    <ol class="breadcrumb bread">
+        <li class="breadcrumb-item"><a routerLink="/content/inicio" ><i class="bi bi-house-fill"></i></a></li>
+        <li class="breadcrumb-item" *ngFor="let breadcrumb of breadcrumbs" [ngClass]="{active: breadcrumb.active}">
+            <a *ngIf="!breadcrumb.active" [routerLink]="breadcrumb.link">{{breadcrumb.text}}</a>
+            <span *ngIf="breadcrumb.active">{{breadcrumb.text}}</span>
+        </li>
+    </ol>
+</nav>
+

@@ -1,0 +1,845 @@
+/* You can add global styles to this file, and also import other style files */
+
+/* Importing Bootstrap SCSS file. */
+@import "bootstrap/scss/bootstrap";
+
+$color-primary: #183124;
+$color-secundario: #d8b133;
+
+$color-texto-menu: white;
+$color-texto-menu-hover: #d8b133;
+$color-menu-hover: #2f6348e3;
+
+
+$buttom-color-positivo: #9d2449;
+$buttom-color-positivo-hover: #610f28;
+$buttom-color-negativo:  #b38e5d;
+$buttom-color-negativo-hover: rgb(145, 114, 73);
+$buttom-color-neutral: #838383;
+$buttom-color-neutral-hover: #5f5f5f;
+
+$boton-color-principal: #ffffff;
+
+$buttom-color-primario-hover: #9d2449;
+$buttom-color-primario-active: #610f28;
+$buttom-color-secundario-hover: #838383;
+$buttom-color-secundario-active: #5f5f5f;
+$buttom-color-error-hover: #b38e5d;
+$buttom-color-error-active: rgb(145, 114, 73);
+
+$color-wizard-activo: #815b28;
+$color-wizard-completed: #b38e5d;
+$color-error: #dc3545;
+
+$color-correcto: #189657;
+
+
+@font-face {
+  font-family: "MontserratRegular";
+  /* El nombre de tu fuente personalizada */
+  font-style: normal;
+  font-weight: 400;
+  src: url("../src/assets/fuentes/Montserrat-Light.otf") format("truetype");
+  /* La ruta del archivo de fuente */
+  /* Opcional: puedes agregar más formatos de fuente como woff, woff2, etc. para una mejor compatibilidad */
+}
+
+body {
+  font-family: "MontserratRegular", sans-serif;
+}
+
+input:active,
+input:focus,
+select:active,
+select:focus {
+  border-color: $color-secundario !important;
+  box-shadow: 0 1px 1px rgba(216, 117, 51, 0.075)inset, 0 0 8px rgba(216, 117, 51, 0.6) !important;
+  outline: 0 none !important;
+}
+
+.app-container {
+  display: flex;
+  flex-direction: column;
+  min-height: 100vh;
+}
+
+.content {
+  flex-grow: 1;
+}
+
+/* Estilos para pantallas pequeñas */
+@media screen and (max-width: 767px) {
+
+  /* Agrega aquí tus estilos para pantallas pequeñas */
+  .tamaño-contenedor {
+    max-width: 620px;
+  }
+
+  .tamaño-footer {
+    max-width: 620px;
+  }
+
+  .footer-fondo {
+    background-size: contain;
+    background-repeat: no-repeat;
+  }
+
+  .scroll-tabla {
+    overflow-x: auto;
+  }
+
+  .hidden-xs {
+    display: none !important
+  }
+
+  .offcanvas.offcanvas-end.canvasPrimario.show {
+    width: 85%;
+  } 
+
+  .offcanvas.offcanvas-end.canvasSecundario.show {
+    width: 82%;
+  } 
+
+  .offcanvas.offcanvas-end.canvasTerciario.show {
+    width: 79%;
+  } 
+
+
+}
+
+/* Estilos para pantallas medianas */
+@media screen and (min-width: 768px) and (max-width: 1023px) {
+
+  /* Agrega aquí tus estilos para pantallas medianas */
+  .tamaño-contenedor {
+    max-width: 900px;
+  }
+
+  .tamaño-footer {
+    max-width: 900px;
+  }
+
+  .offcanvas.offcanvas-end.canvasPrimario.show  {
+    width: 75%;
+  } 
+
+  .offcanvas.offcanvas-end.canvasSecundario.show {
+    width: 72%;
+  } 
+
+  .offcanvas.offcanvas-end.canvasTerciario.show {
+    width: 69%;
+  } 
+}
+
+/* Estilos para pantallas grandes */
+@media screen and (min-width: 1024px) and (max-width: 1535px) {
+
+  /* Agrega aquí tus estilos para pantallas grandes */
+  .tamaño-contenedor {
+    max-width: 1350px;
+  }
+
+  .tamaño-footer {
+    max-width: 1350px;
+  }
+
+  .offcanvas.offcanvas-end.canvasPrimario.show  {
+    width: 60%;
+  } 
+
+  .offcanvas.offcanvas-end.canvasSecundario.show {
+    width: 57%;
+  } 
+
+  .offcanvas.offcanvas-end.canvasTerciario.show {
+    width: 54%;
+  } 
+
+
+}
+
+/* Estilos para pantallas extra grandes */
+@media screen and (min-width: 1536px) {
+
+  /* Agrega aquí tus estilos para pantallas grandes */
+  .tamaño-contenedor {
+    max-width: 1600px;
+  }
+
+  .tamaño-footer {
+    max-width: 1600px;
+  }
+
+  .offcanvas.offcanvas-end.canvasPrimario.show  {
+    width: 50%;
+  } 
+
+  .offcanvas.offcanvas-end.canvasSecundario.show  {
+    width: 47%;
+  } 
+
+  .offcanvas.offcanvas-end.canvasTerciario.show {
+    width: 44%;
+  } 
+
+
+}
+
+.overlay-container {
+  z-index: 9999;
+}
+
+.tamaño-contenedor {
+  display: flex;
+  justify-content: center;
+}
+
+// CONTENIDO MENU
+.container-fluid {
+  margin-right: auto;
+  margin-left: auto;
+}
+
+.color-menu {
+  background-color: $color-primary !important;
+}
+
+.nav-link {
+  color: $color-texto-menu !important;
+}
+
+.nav-link:hover {
+  color: $color-texto-menu-hover !important;
+  cursor: pointer;
+}
+
+.dropdown-item:hover {
+  font-weight: bold;
+  cursor: pointer;
+}
+
+.dropdown-item:active {
+  background-color: #ffffff;
+  color: #000000;
+}
+
+.navbar {
+  justify-content: flex-end;
+  position: fixed;
+  z-index: 999;
+  width: 100%;
+  
+}
+
+.navbar-collapse {
+  flex-grow: 0;
+}
+
+.navbar-toggler:focus {
+  box-shadow: none !important;
+}
+
+.icono {
+  font-size: 26px;
+  /* Ajusta el tamaño según tus necesidades */
+}
+
+//CONTENIDO PRINCIPAL
+.contenedor-principal {
+  margin-right: auto;
+  margin-left: auto;
+  margin-top: 60px;
+}
+
+  h1 {
+    font-weight: bold;
+    font-size: 30px;
+  }
+  h2 {
+    font-weight: bold;
+    font-size: 27px;
+  }
+  h3 {
+    font-weight: bold;
+    font-size: 24px;
+  }
+  h4 {
+    font-weight: bold;
+    font-size: 21px;
+  }
+  h5 {
+    font-weight: bold;
+    font-size: 18px;    // SI MUEVES  EL TAMAÑO TIENS QUE MODIFICAR wizard-steps li.wizardbar-item.completed::after en el margin top 
+  }
+
+
+  p.titulo-principal{
+    font-weight: bold;
+    font-size: 30px;
+    margin: 0px;
+  }
+
+  p.titulo-secundario{
+    font-weight: bold;
+    font-size: 21px;
+    margin: 0px;
+  }
+
+  p.sub-titulo{
+    font-weight: bold;
+    font-size: 18px;
+    margin: 0px;
+  }
+
+//TABLASs
+
+.valoresCentrados {
+  text-align: center;
+  justify-content: center;
+}
+
+.valoresDerecha {
+  text-align: right;
+  justify-content: center;
+}
+
+.valoresIzquierda {
+  text-align: left;
+  justify-content: center;
+}
+
+// FOOTER
+footer {
+  background-color: $color-primary;
+  padding: 0px;
+  min-height: 100px;
+  flex-shrink: 0;
+}
+
+.tamaño-footer {
+  height: 50px;
+}
+
+.footer-fondo {
+  background-image: url("../src/assets/imgen/pleca.svg");
+  min-width: 100%;
+  min-height: 50px;
+}
+
+//MARGENES
+
+[class^="col-sm"] {
+  margin-bottom: 5px;
+  /* Ajusta el valor del margen según tus necesidades */
+}
+
+.mergen-boton-top-25 {
+  margin-top: 25px;
+}
+
+.form-group {
+  margin-bottom: 5px;
+}
+
+.form-label {
+  font-weight: bold !important;
+}
+
+// VALIDACION CONTROLES
+.is-invalid {
+  border-color: $color-error;
+  padding-right: calc(1.5em + 0.75rem);
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.1875rem) center;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.is-invalid:focus {
+  border-color: $color-error;
+  box-shadow: 0 0 0 0.25rem rgba(var(--bs-danger-rgb), 0.25);
+}
+
+.texto-invalido {
+  color: $color-error;
+}
+
+.texto-valido {
+  color: $color-correcto;
+}
+
+// BOTONES  MODAL
+.btn-positivo-modal {
+  background-color: $buttom-color-positivo;
+  color: #fff;
+  border-color: $buttom-color-positivo;
+  margin-bottom: 1px;
+}
+
+.btn-positivo-modal:hover {
+  background-color: $buttom-color-positivo-hover;
+  color: #fff;
+  border-color: $buttom-color-positivo-hover;
+}
+
+.btn-positivo-modal:active {
+  background-color: $buttom-color-positivo-hover !important;
+  color: #fff;
+  border-color: $buttom-color-positivo-hover;
+}
+
+
+.btn-negativo-modal {
+  background-color: $buttom-color-negativo;
+  color: #fff;
+  border-color: $buttom-color-negativo;
+ margin-bottom: 1px;
+}
+
+.btn-negativo-modal:hover {
+  background-color: $buttom-color-negativo-hover;
+  color: #fff;
+  border-color: $buttom-color-negativo-hover;
+}
+
+.btn-negativo-modal:active {
+  background-color: $buttom-color-negativo-hover !important;
+  color: #fff;
+  border-color: $buttom-color-negativo-hover;
+}
+
+
+.btn-neutral-modal {
+  background-color: $buttom-color-neutral;
+  color:#fff;
+  border-color: $buttom-color-neutral-hover;
+ margin-bottom: 1px;
+}
+
+.btn-neutral-modal:hover {
+  background-color: $buttom-color-neutral-hover;
+  color: #fff;
+  border-color: $buttom-color-neutral-hover;
+}
+
+.btn-neutral-modal:active {
+  background-color: $buttom-color-neutral-hover !important;
+  color: #fff;
+  border-color: $buttom-color-neutral-hover;
+}
+
+
+
+
+// BOTONES  GENERAL
+.btn-primary {
+  background-color: $boton-color-principal;
+  color: $buttom-color-primario-hover;
+  border-color: $buttom-color-primario-hover;
+ margin-bottom: 1px;
+}
+
+.btn-primary:hover {
+  background-color: $buttom-color-primario-hover;
+  color: $boton-color-principal;
+  border-color: $buttom-color-primario-hover;
+}
+
+.btn-primary:active {
+  background-color: $buttom-color-primario-active !important;
+  color: $boton-color-principal !important;
+  border-color: $buttom-color-primario-active !important;
+}
+
+.btn-secundary {
+  background-color: $boton-color-principal;
+  color: $buttom-color-secundario-hover;
+  border-color: $buttom-color-secundario-hover;
+ margin-bottom: 1px;
+}
+
+.btn-secundary:hover {
+  background-color: $buttom-color-secundario-hover;
+  color: $boton-color-principal;
+  border-color: $buttom-color-secundario-hover;
+}
+
+.btn-secundary:active {
+  background-color: $buttom-color-secundario-active !important;
+  color: $boton-color-principal !important;
+  border-color: $buttom-color-secundario-active !important;
+}
+
+
+
+.btn-cancelar {
+  background-color: $boton-color-principal;
+  color: $buttom-color-error-hover;
+  border-color: $buttom-color-error-hover;
+ margin-bottom: 1px;
+}
+
+.btn-cancelar:hover {
+  background-color: $buttom-color-error-hover;
+  color: $boton-color-principal;
+  border-color: $buttom-color-error-hover;
+}
+
+.btn-cancelar:active {
+  background-color: $buttom-color-error-active !important;
+  color: $boton-color-principal !important;
+  border-color: $buttom-color-error-active !important;
+}
+
+.btn-danger{
+  margin-bottom: 1px !important;
+}
+
+
+
+.boton-izquierdo {
+  float: left;
+  margin-right: 10px;
+}
+
+.boton-derecho {
+  float: right;
+  margin-left: 10px;
+}
+
+// VALORES WIZARD
+
+.wizardbar-item h5 {
+  margin-top: 10px;
+}
+
+.wizardbar-item-final h5 {
+  margin-top: 10px;
+}
+
+.wizard-steps {
+  list-style: none !important;
+  padding: 0;
+  margin: 0 0 25px;
+}
+
+.wizard-steps li {
+  font-size: 14px;
+  padding: 0 50px 0 50px;
+  display: inline-block;
+  height: 70px;
+  color: #000;
+  margin-bottom: 0;
+  text-align: left;
+  background-color: #eee;
+  justify-content: center;
+  margin-top: 10px;
+}
+
+.wizardbar-item {
+  position: relative;
+  margin-right: 2px;
+  cursor: no-drop;
+}
+
+
+.wizardbar-item-final {
+  position: relative;
+  margin-right: 2px;
+  top:-7px;
+}
+
+
+
+.wizard-steps li:not(:last-child) {
+  border-top-left-radius: 5px;
+  border-bottom-left-radius: 5px;
+}
+
+.wizard-steps li:last-child {
+  border-radius: 0 5px 5px 0;
+}
+
+
+.wizard-steps li:not(:last-child)::after {
+  content: "";
+  position: absolute;
+  margin-top: -31px;
+  background-color: #eee;
+  right: -29px;
+  border-radius: 3px;
+  border-right: 3px solid #fff;
+  border-top: 3px solid #fff;
+  height: 52px;
+  width: 52px;
+  -webkit-transform: rotate(45deg);
+  -ms-transform: rotate(45deg);
+  transform: rotate(45deg);
+  z-index: 5;
+}
+
+  .wizard-steps li.wizardbar-item.activo::after {
+    background-color: $color-wizard-activo;
+    color: #fff;
+    margin-top: -31px;
+  }
+
+  .wizard-steps li.wizardbar-item.completed::after {
+    background-color: $color-wizard-completed;
+    color: #fff;
+    margin-top: -31px;
+  }
+
+  .wizard-steps li.wizardbar-item.validado::after {
+    background-color: $color-wizard-completed;
+    color: #fff;
+    margin-top: -31px;
+  }
+
+  .wizard-steps li.wizardbar-item-final.completed::after {
+    background-color:  #71b352;
+    color: #fff;
+    margin-top: -31px;
+  }
+
+  .wizard-steps li.wizardbar-item.activo {
+    background-color: $color-wizard-activo;
+    color: #fff;
+    height: 80px;
+    top: -5px;
+    cursor: default;
+  }
+
+  .wizard-steps li.wizardbar-item.completed {
+    background-color: $color-wizard-completed;
+    color: #fff;
+    height: 80px;
+    top: -5px;
+    cursor: no-drop;
+  }
+
+  .wizard-steps li.wizardbar-item.validado {
+    background-color: $color-wizard-completed;
+    color: #fff;
+    height: 80px;
+    top: -5px;
+    cursor: pointer;
+  }
+
+  .wizard-steps li.wizardbar-item-final.completed {
+    background-color:  #71b352;
+    color: #fff;
+    height: 80px;
+    top: -12px;
+  }
+
+
+.wizard-steps li.completed:not(:last-child)::after {
+  height: 62px;
+  width: 58px;
+}
+
+.wizard-steps li.activo:not(:last-child)::after {
+  height: 62px;
+  width: 58px;
+}
+
+.wizard-steps li.validado:not(:last-child)::after {
+  height: 62px;
+  width: 58px;
+}
+
+.spacio-wizardbar-item-final{
+  margin-top: 22px;
+}
+
+.icono-wizardbar-item-final{
+  font-size: 24px;
+  margin-left: 25px;
+}
+
+// LINE>A  SEPARADORA
+hr {
+  margin-top: 15px !important;
+  margin-bottom: 15px !important;
+  border-top: 1px solid #8a0e0e;
+  border-top-color: rgb(238, 238, 238);
+  opacity: 1;
+}
+
+hr.red {
+  margin: 10px 0 70px;
+  border-top-color: #dce0e0;
+  color: #a22244;
+}
+
+hr.red::before {
+  content: " ";
+  width: 35px;
+  height: 5px;
+  background-color: #B38E5D;
+  position: absolute;
+  display: block;
+}
+
+.card {
+  margin: 0px 10px 15px 10px;
+  padding: 10px;
+}
+
+.card-header{
+   margin: 0px !important;
+   padding: 10px;
+}
+
+.card-body{
+   margin: 0px !important;
+   padding: 10px;
+}
+
+
+.form-select.is-invalid-select {
+  border-color: red;
+  background-image: url("data:image/svg+xml,%3csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 12 12' width='12' height='12' fill='none' stroke='%23dc3545'%3e%3ccircle cx='6' cy='6' r='4.5'/%3e%3cpath stroke-linejoin='round' d='M5.8 3.6h.4L6 6.5z'/%3e%3ccircle cx='6' cy='8.2' r='.6' fill='%23dc3545' stroke='none'/%3e%3c/svg%3e");
+  background-repeat: no-repeat;
+  background-position: right calc(0.375em + 0.2875rem) center;
+  background-size: calc(0.75em + 0.375rem) calc(0.75em + 0.375rem);
+}
+
+.titulo_principal {
+  font-size: 22px;
+  font-weight: bold; 
+}
+
+p {
+   margin: 3px;
+}
+
+
+.recuperar {
+  color: rgba(175, 189, 228, 0.932);
+  text-decoration: none;
+  margin-top: 14px;
+  cursor: pointer;
+}
+
+.recuperar:hover {
+  color:  rgba(67, 111, 233, 0.932);
+}
+
+.container-accion {
+  display: flex;
+  justify-content: space-between;
+ 
+}
+
+
+em{
+  cursor: pointer;
+}
+
+.card-container {
+  min-height: 300px !important;
+  max-height: 300px !important;
+  transition: box-shadow 0.3s ease; /* Transición para la sombra */
+}
+
+.card-container:hover {
+  box-shadow: 0 5px 15px rgba(0, 0, 0, 0.3); /* Aplica la sombra al pasar el mouse */
+}
+
+.offcanvas-header{
+  padding: 5px;
+  margin: 0 10px 0 10px;
+}
+
+.offcanvas-body{
+  padding: 5px;
+}
+
+.offcanvas-footer{
+  padding: 5px;
+}
+
+.offcanvas-bajar{
+  z-index: 1000; // Se dejo  mil para que quede ensima de footer y menu de  la poagina
+}
+
+
+.group-telefono {
+  position: relative;
+  display: flex;
+  flex-wrap: wrap;
+  align-items: stretch;
+  width: 100%;
+}
+
+.lada {
+  width: 25%;
+}
+
+.telefono {
+  width: 75%;
+}
+
+
+// VALIDACIONES
+.validadoCorrecto {
+  color: green;
+  font-size: 18px;
+}
+
+.validadoIncorrecto {
+  color: red;
+  font-size: 18px;
+}
+
+.titulo{
+  font-size: 20px;
+}
+
+.sub-titulo{
+  font-size: 18px;
+}
+
+.pdfStyle {
+  width: 90%;
+  height: 100vh;
+}
+
+.msg-invalido {
+  font-size: small;
+  color: $color-error;
+}
+
+/* Botones tabla carga archivos */
+
+
+.delete {
+  color: red!important;
+  background: rgb(219,0,0)!important;
+  background: radial-gradient(circle, rgba(219,0,0,0.06346288515406162) 0%, rgba(219,0,0,0) 100%)!important;
+}
+
+.update {
+  color: blue!important;
+  background: rgb(27,104,207)!important;
+  background: radial-gradient(circle, rgba(27,104,207,0.10547969187675066) 0%, rgba(27,104,207,0) 100%)!important;
+}
+
+.download {
+  color: green!important;
+  background: rgb(30,135,29) !important;
+  background: radial-gradient(circle, rgba(30,135,29,0.08867296918767509) 0%, rgba(30,135,29,0) 100%)!important;
+}
+
+
+.deshabilitado {
+  background: none; 
+  border: none;
+}
+
+.nomostrarBoton {
+  display: none;
+}

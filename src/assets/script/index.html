@@ -1,0 +1,431 @@
+<!doctype html>
+<html>
+  <head>
+    <title>Mi Página Web</title>
+  </head>
+  <body>
+    <h1>Mi Página Web</h1>
+    <p>Este es un ejemplo de cómo cargar archivos JavaScript externos.</p>
+
+    <!-- Cargar un archivo JavaScript externo -->
+    <script src="jquery-2.1.1.min.js"></script>
+    <script type="text/javascript" src="x509SAT/sat/libs.js"></script>
+
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/sjcl/sjcl.js"
+    ></script>
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/sjcl/sha1.js"
+    ></script>
+
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/jsrsasign/ext/jsbn.js"
+    ></script>
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/jsrsasign/ext/jsbn2.js"
+    ></script>
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/jsrsasign/ext/rsa.js"
+    ></script>
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/jsrsasign/ext/rsa2.js"
+    ></script>
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/js/asn1/base64.js"
+    ></script>
+
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/jsrsasign/crypto-1.js"
+    ></script>
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/jsrsasign/asn1hex-1.js"
+    ></script>
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/jsrsasign/rsasign-1.js"
+    ></script>
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/jsrsasign/x509-1.js"
+    ></script>
+
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/js/cryptoJS/rollups/pbkdf2.js"
+    ></script>
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/js/cryptoJS/rollups/tripledes.js"
+    ></script>
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/js/cryptoJS/rollups/aes.js"
+    ></script>
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/js/cryptoJS/rollups/rc2.js"
+    ></script>
+
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/js/asn1/asn1.js"
+    ></script>
+
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/jsrsasign/ext/base64_002.js"
+    ></script>
+    <script
+      language="JavaScript"
+      type="text/javascript"
+      src="x509SAT/js/asn1/hex.js"
+    ></script>
+
+    <script type="text/javascript">
+      $(function (e) {
+        var error = '';
+        if (error != '' || error.length != 0) {
+          if (
+            new String(error).valueOf() ==
+            new String('Certificado Revocado').valueOf()
+          ) {
+            error =
+              'No se puede acceder al aplicativo porque su E.FIRMA está revocada.';
+          }
+
+          if (
+            new String(error).valueOf() ==
+            new String('Certificado Caduco').valueOf()
+          ) {
+            error =
+              'No se puede acceder al aplicativo porque su E.FIRMA no está vigente.';
+          }
+
+          showMsgError(error);
+        }
+
+        if (
+          window.File &&
+          window.FileReader &&
+          window.FileList &&
+          window.Blob
+        ) {
+          document
+            .getElementById('fileCertificate')
+            .addEventListener('change', handleFileSelect, false);
+        } else {
+          alert('The File APIs are not fully supported in this browser.');
+        }
+      });
+      function despliega(error) {
+        showMsgError(error);
+      }
+
+      function uint8ToString(buf) {
+        var i,
+          length,
+          out = '';
+        for (i = 0, length = buf.length; i < length; i += 1) {
+          out += String.fromCharCode(buf[i]);
+        }
+        return out;
+      }
+
+      function handleFileSelect(evt) {
+        var f = evt.target.files[0]; // FileList object
+        var reader = new FileReader();
+
+        if (!FileReader.prototype.readAsBinaryString) {
+          FileReader.prototype.readAsBinaryString = function (fileData) {
+            var binary = '';
+            var pt = this;
+            var reader = new FileReader();
+            reader.onload = function (e) {
+              var bytes = new Uint8Array(reader.result);
+              var length = bytes.byteLength;
+              for (var i = 0; i < length; i++) {
+                binary += String.fromCharCode(bytes[i]);
+              }
+              pt.content = binary;
+              $(pt).trigger('onload');
+            };
+            reader.readAsArrayBuffer(fileData);
+          };
+        }
+
+        var reader = new FileReader();
+        reader.readAsBinaryString(f);
+        reader.onload = function (e) {
+          if (reader.result) reader.content = reader.result;
+          var base64Data = btoa(reader.content);
+
+          cerBase64 = base64Data;
+        };
+      }
+
+      var respuesta = validate();
+
+      alert(respuesta);
+      function firmar(event) {
+        if (validate()) {
+          var rfc = document.getElementById('rfc').value;
+
+          alert('RFC: ' + rfc);
+          var numSerie = obtieneNumSerie();
+
+          alert('Numero de serie:: ' + numSerie);
+          var co = 'qsedwfwqswwadfasd';
+          var laFirma = generaFirma(
+            document.getElementById('privateKeyPassword').value,
+            '',
+            co,
+          );
+
+          alert('FORMA ELECTRONIOCA: ' + laFirma);
+          if (laFirma != 'SIN_FIRMA') {
+          }
+        } else {
+          event.preventDefault();
+          showMsgError(
+            '<strong>¡Error!</strong> no ha llenado varios campos requeridos. Por favor verifique.',
+          );
+        }
+      }
+
+      /**
+       * Funcion para mostrar mensaje de error.
+       * */
+      function showMsgError(mensaje) {
+        $('#divError').html(mensaje);
+        $('#divError').show();
+        document.getElementById('submit').disabled = true;
+      }
+
+      function limpiarMsgs() {
+        $('#divError').html('');
+        $('#divError').hide();
+        document.getElementById('submit').disabled = false;
+      }
+
+      $('#contrasena').click(function () {
+        $(location).attr('href', jsurlciec);
+      });
+    </script>
+
+    <div class="bottom-buffer" style="margin-left: 8px">
+      <h3>Acceso con e.firma</h3>
+    </div>
+
+    <!-- Mensaje ERROR -->
+    <div id="divError" class="alert alert-danger" style="display: none">
+      <strong>¡Error!</strong> no ha llenado varios campos requeridos. Por favor
+      verifique.
+    </div>
+
+    <!-- FORMULARIO -->
+    <form role="form" method="post">
+      <div class="form-group">
+        <div class="input-group">
+          <label class="control-label" for="txtCertificate"
+            >Certificado (.cer):</label
+          >
+          <input
+            class="form-control"
+            type="text"
+            placeholder="Ubicación del certificado"
+            name="txtCertificate"
+            id="txtCertificate"
+            size="25"
+            readonly="readonly"
+            style="width: 95%; border-color: rgb(208, 2, 27)"
+            onclick="limpiarMsgs();"
+          />
+          <input
+            type="file"
+            style="display: none"
+            accept=".cer"
+            id="fileCertificate"
+            onclick="limpiarMsgs();"
+          />
+          <span class="input-group-btn" style="vertical-align: bottom">
+            <button
+              type="button"
+              onclick="limpiarMsgs();"
+              class="btn btn-default"
+              id="btnCertificate"
+              name="btnCertificate"
+            >
+              Buscar
+            </button>
+          </span>
+        </div>
+        <span
+          id="msgErrorCert"
+          style="
+            color: rgb(208, 2, 27);
+            font-size: 11px;
+            font-weight: initial;
+            visibility: hidden;
+          "
+          >Este campo es obligatorio.</span
+        >
+      </div>
+
+      <div class="form-group">
+        <div class="input-group">
+          <label class="control-label" for="txtPrivateKey"
+            >Clave privada (.key):</label
+          >
+          <input
+            class="form-control"
+            id="txtPrivateKey"
+            name="txtPrivateKey"
+            size="25"
+            type="text"
+            placeholder="Ubicación de la llave privada"
+            readonly="readonly"
+            style="width: 95%; border-color: rgb(208, 2, 27)"
+            onclick="limpiarMsgs();"
+          />
+          <input
+            type="file"
+            style="display: none"
+            accept=".key"
+            id="filePrivateKey"
+            onclick="limpiarMsgs();"
+          />
+
+          <span class="input-group-btn" style="vertical-align: bottom">
+            <button
+              type="button"
+              class="btn btn-default"
+              name="btnPrivateKey"
+              id="btnPrivateKey"
+              onclick="limpiarMsgs();"
+            >
+              Buscar
+            </button>
+          </span>
+        </div>
+        <span
+          id="msgErrorKey"
+          style="
+            color: rgb(208, 2, 27);
+            font-size: 11px;
+            font-weight: initial;
+            visibility: hidden;
+          "
+          >Este campo es obligatorio.</span
+        >
+      </div>
+
+      <div class="form-group">
+        <label class="control-label" for="privateKeyPassword">
+          Contraseña de clave privada:
+          <span
+            style="left: -2px"
+            class="glyphicon glyphicon-question-sign"
+            aria-hidden="true"
+            data-toggle="tooltip"
+            data-placement="right"
+            title="Esta contraseña es la que corresponde la clave privada .key"
+          ></span>
+        </label>
+        <input
+          class="form-control"
+          id="privateKeyPassword"
+          type="password"
+          name="privateKeyPassword"
+          placeholder="Contraseña"
+          onclick="limpiarMsgs();"
+          style="border-color: rgb(208, 2, 27)"
+        />
+        <span
+          id="msgErrorPass"
+          style="
+            color: rgb(208, 2, 27);
+            font-size: 11px;
+            font-weight: initial;
+            visibility: hidden;
+          "
+          >Este campo es obligatorio.</span
+        >
+      </div>
+
+      <div class="form-group">
+        <label for="rfc">RFC:</label>
+        <input
+          class="form-control"
+          name="rfc"
+          id="rfc"
+          placeholder="RFC"
+          type="text"
+          disabled="disabled"
+          style="border-color: rgb(208, 2, 27)"
+        />
+        <span
+          id="msgErrorRfc"
+          style="
+            color: rgb(208, 2, 27);
+            font-size: 11px;
+            font-weight: initial;
+            visibility: hidden;
+          "
+          >Este campo es obligatorio.</span
+        >
+      </div>
+
+      <div class="clearfix">
+        <div class="pull-right">
+          <input
+            class="btn btn-default"
+            type="button"
+            value="Validar firma"
+            id="submit"
+            name="submit"
+            onclick="firmar(event);"
+            disabled="disabled"
+          />
+          <input
+            type="button"
+            id="btnEnviar"
+            value="Enviar firma"
+            class="btn btn-default"
+            data-bind="click: signSgLib, enable: false"
+          />
+        </div>
+
+        <div><br />&nbsp;<br />&nbsp;<br />&nbsp;<br /></div>
+        <input type="text" id="base64" />
+        <input type="text" id="cadenaSha256" />
+        <input type="text" id="noCertificadoF" />
+      </div>
+    </form>
+  </body>
+</html>

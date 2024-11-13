@@ -1,0 +1,674 @@
+<div class="row">
+  <sg-wizard [listaPasos]="listaPasos" (valorIndice)="recibeIndice($event)"></sg-wizard>
+  <div class="col-md-12">
+    <div class="col-sm-10">
+      <div class="card" style="padding: 15px;">
+        <div class="card-body row" *ngIf="Indice == 0">
+          <div *ngIf="!habilitaLogin">
+            <div class="col-sm-12 row" [formGroup]="FormularioFirmaElectronica">
+              <div class="col-sm-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" id="flexRadioConCURP" formControlName="firma"
+                    [value]="true">
+                  <label class="form-check-label" for="flexRadioConCURP">
+                    Con firma electrónica
+                  </label>
+                </div>
+              </div>
+
+              <div class="col-sm-3">
+                <div class="form-check">
+                  <input class="form-check-input" type="radio" id="flexRadioSinCURP" formControlName="firma"
+                    [value]="false">
+                  <label class="form-check-label" for="flexRadioSinCURP">
+                    Sin firma electrónica
+                  </label>
+                </div>
+              </div>
+            </div>
+            <hr>
+            <div class="col-sm-12 row"
+              [style.display]="FormularioFirmaElectronica.get('firma')?.value ? 'block' : 'none'"
+              [formGroup]="FormularioConfirma">
+              <iframe id="Iframe" width="500" height="350" frameborder="0" [src]="safeURL"></iframe>
+            </div>
+            <div class="col-sm-12 row" *ngIf="!FormularioFirmaElectronica.get('firma')?.value"
+              [formGroup]="FormularioSinFirma">
+              <div class="col-sm-12">
+                <p>
+                  Es necesario realizar algunas verificaciones antes de crear tu cuenta de usuario, ingresa tu RFC para
+                  poder realizar esta validación.
+                </p>
+                <p>
+                  Si no cuentas con un RFC, comunícate al INDEP al teléfono: 55-1719-1600. Extensiones: 5073, 5459 y
+                  5188. O envíanos un correo: depositarias&#64;indep.gob.mx
+                </p>
+              </div>
+              <div class="col-sm-6">
+                <div class="form-group">
+                  <label for="RFC" class="form-label">RFC*:</label>
+                  <input type="text" class="form-control" id="RFC" placeholder="INGRESA TU RFC" formControlName="rfc"
+                    maxlength="13" (input)="convertirAMayusculasRfc($event)"
+                    [class.is-invalid]="
+                        this.FormularioSinFirma.controls['rfc'].status == 'INVALID' && this.FormularioSinFirma.controls['rfc'].touched ">
+                </div>
+                <div class="texto-invalido"
+                  *ngIf="this.FormularioSinFirma.controls['rfc'].touched && this.FormularioSinFirma.controls['rfc'].status == 'INVALID'">
+                  <p *ngIf="this.FormularioSinFirma.get('rfc')?.errors?.['required']">El RFC es requerido</p>
+                  <p *ngIf="this.FormularioSinFirma.get('rfc')?.errors?.['pattern']">El RFC no tiene el formato esperado
+                  </p>
+
+                </div>
+              </div>
+            </div>
+          </div>
+          <ng-container *ngIf="habilitaLogin">
+            <div class="col-sm-12">
+              <p>
+                Ingresa el usuario y la contraseña de registro único para continuar con tu registro.
+              </p>
+              <p *ngIf="!mostrarCuenta">
+                Si no recuerdas el usuario o la contraseña de registro único, utiliza alguno de los enlaces para
+                recuperar
+                cuenta o restablecer contraseña.
+              </p>
+              <p *ngIf="mostrarCuenta">
+                Si no recuerdas el usuario o la contraseña de registro único, <a
+                  href="https://registrounico.indep.gob.mx:8443/subastas/login/auth">ingresa al siguiente enlace para su
+                  recuperación</a>
+              </p>
+            </div>
+            <div class="col-sm-6 row" [formGroup]="LoginForm">
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label for="usuario" class="form-label">Usuario*:</label>
+                  <input type="text" class="form-control" id="usuario" placeholder="usuario" formControlName="usuario"
+                    maxlength="50"
+                    [class.is-invalid]="
+                      this.LoginForm.controls['usuario'].status == 'INVALID' && this.LoginForm.controls['usuario'].touched ">
+                </div>
+                <div class="texto-invalido"
+                  *ngIf="this.LoginForm.controls['usuario'].touched && this.LoginForm.controls['usuario'].status == 'INVALID'">
+                  <p>El usuario es requerido</p>
+                </div>
+              </div>
+              <div class="col-sm-12">
+                <div class="form-group">
+                  <label for="password" class="form-label">Contraseña*:</label>
+                  <input type="password" class="form-control" id="password" placeholder="Contraseña"
+                    formControlName="password" maxlength="20" formControlName="password" maxlength="20"
+                    [class.is-invalid]="
+                        this.LoginForm.controls['password'].status == 'INVALID' && this.LoginForm.controls['password'].touched ">
+                </div>
+                <div class="texto-invalido"
+                  *ngIf="this.LoginForm.controls['password'].touched && this.LoginForm.controls['password'].status == 'INVALID'">
+                  <p>La contraseña es requerida</p>
+                </div>
+              </div>
+              <div class="container-accion" *ngIf="!mostrarCuenta">
+                <a class="recuperar" (click)="recoverAccount()">
+                  ¿Recuperar cuenta?
+                </a>
+                <a class="recuperar" (click)="reset()">
+                  ¿Recuperar contraseña?
+                </a>
+              </div>
+            </div>
+          </ng-container>
+        </div>
+        <div class="card-body row" *ngIf="Indice == 1">
+          <div class="col-sm-12 row" [formGroup]="FormularioEsNacional">
+            <div class="col-sm-3">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" id="flexRadioNacional" formControlName="es_nacional"
+                  [value]="true" (click)="cambioNacional()">
+                <label class="form-check-label" for="flexRadioNacional">
+                  Solicitante Nacional
+                </label>
+              </div>
+            </div>
+            <div class="col-sm-3">
+              <div class="form-check">
+                <input class="form-check-input" type="radio" id="flexRadioExtrangero" formControlName="es_nacional"
+                  [value]="false" (click)="cambioExtrangero()">
+                <label class="form-check-label" for="flexRadioExtrangero">
+                  Solicitante Extranjero
+                </label>
+              </div>
+            </div>
+          </div>
+          <hr>
+          <div class="col-sm-12 row" *ngIf="tipoPersona === tipoPersonaFisica">
+            <div class="col-sm-12 row" *ngIf="FormularioEsNacional.get('es_nacional')?.value"
+              [formGroup]="FormularioDatosGeneralesNacional">
+              <div class="col-sm-6">
+                <label for="nombre" class="form-label">CURP*:</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="nombre" placeholder="CURP" formControlName="curp"
+                    (input)="convertirAMayusculasNacional($event)" maxlength="20"
+                    [class.is-invalid]="
+                      this.FormularioDatosGeneralesNacional.controls['curp'].status == 'INVALID' && this.FormularioDatosGeneralesNacional.controls['curp'].touched">
+                  <button class="btn btn-outline btn-primary" type="button" id="button-addon2"
+                    (click)="validaCurp()">Buscar</button>
+                </div>
+                <div class="texto-invalido"
+                  *ngIf="this.FormularioDatosGeneralesNacional.controls['curp'].touched && this.FormularioDatosGeneralesNacional.controls['curp'].status == 'INVALID'">
+                  <p *ngIf="this.FormularioDatosGeneralesNacional.get('curp')?.errors?.['required']">La CURP es
+                    requerida
+                  </p>
+                  <p *ngIf="this.FormularioDatosGeneralesNacional.get('curp')?.errors?.['pattern']">La CURP no tiene el
+                    formato esperado</p>
+                </div>
+              </div>
+              <div class="col-sm-6">
+
+              </div>
+              <div class="col-sm-6">
+                <label for="nombre" class="form-label">Nombre:</label>
+                <input type="text" class="form-control" id="nombre" placeholder="Nombre" formControlName="nombre"
+                  maxlength="255">
+                <div class="texto-invalido"
+                  *ngIf="this.FormularioDatosGeneralesNacional.controls['nombre'].touched && this.FormularioDatosGeneralesNacional.controls['nombre'].status == 'DISABLED' ">
+                  <p>El nombre es requerido</p>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="primerapellido" class="form-label">Primer apellido:</label>
+                <input type="text" class="form-control" id="primerapellido" placeholder="Primer apellido"
+                  formControlName="primer_apellido" maxlength="255">
+                <div class="texto-invalido"
+                  *ngIf="this.FormularioDatosGeneralesNacional.controls['primer_apellido'].touched && this.FormularioDatosGeneralesNacional.controls['primer_apellido'].status == 'DISABLED' ">
+                  <p>El primer apellido es requerido</p>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="segundoapellido" class="form-label">Segundo apellido:</label>
+                <input type="text" class="form-control" id="segundoapellido" placeholder="Segundo apellido"
+                  formControlName="segundo_apellido" maxlength="255">
+                <div class="texto-invalido"
+                  *ngIf="this.FormularioDatosGeneralesNacional.controls['segundo_apellido'].touched && this.FormularioDatosGeneralesNacional.controls['segundo_apellido'].status == 'DISABLED' ">
+                  <p>El segundo apellido es requerido</p>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="fecha_nacimiento" class="form-label">Fecha de nacimiento:</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="segundoapellido" placeholder="dd-mm-yyyy"
+                    formControlName="fecha_nacimiento">
+                  <sg-input-fecha (valorCambiado)="cambioFechaNacimiento($event)"
+                    [setFecha]="FormularioDatosGeneralesNacional.controls['fecha_nacimiento'].value"
+                    [habilitado]="false"></sg-input-fecha>
+                </div>
+                <div class="texto-invalido"
+                  *ngIf="this.FormularioDatosGeneralesNacional.controls['fecha_nacimiento'].touched && this.FormularioDatosGeneralesNacional.controls['fecha_nacimiento'].status == 'DISABLED'  ">
+                  <p>La fecha de nacimiento es requerida</p>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="contra" class="form-label">Correo electrónico*:</label>
+                <input type="text" class="form-control" id="contra" placeholder="ejemplo@outlook.com"
+                  formControlName="correo" maxlength="60" [class.is-invalid]="
+                    this.FormularioDatosGeneralesNacional.controls['correo'].status == 'INVALID' &&
+                    this.FormularioDatosGeneralesNacional.controls['correo'].touched">
+                <div class="texto-invalido"
+                  *ngIf="this.FormularioDatosGeneralesNacional.controls['correo'].touched && this.FormularioDatosGeneralesNacional.controls['correo'].status == 'INVALID' ">
+                  <p *ngIf="this.FormularioDatosGeneralesNacional.get('correo')?.errors?.['required']">El correo es
+                    requerido</p>
+                  <p *ngIf="this.FormularioDatosGeneralesNacional.get('correo')?.errors?.['pattern']">El correo no tiene
+                    el formato requerido</p>
+                </div>
+
+              </div>
+              <div class="col-sm-6">
+                <label for="EntidadFederetiva" class="form-label">Entidad federativa:</label>
+                <select class="form-select" aria-label="Default select example" id="EntidadFederetiva"
+                  formControlName="id_estado">
+                  <option value="0">Selecciona una entidad</option>
+                  <option *ngFor="let estado of listaEstados" [value]="estado.id">{{ estado.nombre }}</option>
+                </select>
+                <div class="texto-invalido"
+                  *ngIf="this.FormularioDatosGeneralesNacional.controls['id_estado'].touched && this.FormularioDatosGeneralesNacional.controls['id_estado'].status == 'DISABLED' ">
+                  <p *ngIf="!FormularioDatosGeneralesNacional.get('id_estado')?.errors?.['valorInvalido']">La entidad
+                    federativa es
+                    requerida</p>
+                </div>
+              </div>
+
+              <div class="col-sm-6">
+                <label for="cargo_profesion" class="form-label">Cargo o profesión*:</label>
+                <div style="display: flex;">
+                  <input type="text" class="form-control" id="nombre" placeholder="Cargo o profesión"
+                    formControlName="cargo_profesion" maxlength="250" [class.is-invalid]="
+                        this.FormularioDatosGeneralesNacional.controls['cargo_profesion'].status == 'INVALID' &&
+                        this.FormularioDatosGeneralesNacional.controls['cargo_profesion'].touched">
+                  <button title="Cargo o profesión de la persona que firmará las solicitudes"
+                    alt="Cargo o profesión de la persona que firmará las solicitudes"
+                    style="background-color: white; border: white;"><i class="bi bi-exclamation"></i></button>
+                </div>
+                <div class="texto-invalido"
+                  *ngIf="this.FormularioDatosGeneralesNacional.controls['cargo_profesion'].touched && this.FormularioDatosGeneralesNacional.controls['cargo_profesion'].status == 'INVALID'">
+                  <p>El cargo o profesión de la persona que firmará los documentos son requeridos</p>
+                </div>
+              </div>
+            </div>
+            <div class="col-sm-12 row" *ngIf="!FormularioEsNacional.get('es_nacional')?.value"
+              [formGroup]="FormularioDatosGeneralesExtrangero">
+              <div class="col-sm-6">
+                <label for="nombre" class="form-label">Nombre*:</label>
+                <input type="text" class="form-control" id="nombre" placeholder="Nombre" formControlName="nombre"
+                  maxlength="255"
+                  [class.is-invalid]="
+                  this.FormularioDatosGeneralesExtrangero.controls['nombre'].status == 'INVALID' && this.FormularioDatosGeneralesExtrangero.controls['nombre'].touched">
+                <div class="texto-invalido"
+                  *ngIf="this.FormularioDatosGeneralesExtrangero.controls['nombre'].touched && this.FormularioDatosGeneralesExtrangero.controls['nombre'].status == 'INVALID'">
+                  <p>El nombre es requerido</p>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="primerapellido" class="form-label">Primer apellido*:</label>
+                <input type="text" class="form-control" id="primerapellido" placeholder="Primer apellido"
+                  formControlName="primer_apellido" maxlength="255"
+                  [class.is-invalid]="
+                  this.FormularioDatosGeneralesExtrangero.controls['primer_apellido'].status == 'INVALID' && this.FormularioDatosGeneralesExtrangero.controls['primer_apellido'].touched">
+                <div class="texto-invalido"
+                  *ngIf="this.FormularioDatosGeneralesExtrangero.controls['primer_apellido'].touched && this.FormularioDatosGeneralesExtrangero.controls['primer_apellido'].status == 'INVALID'">
+                  <p>El primer apellido es requerido</p>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="segundoapellido" class="form-label">Segundo apellido:</label>
+                <input type="text" class="form-control" id="segundoapellido" placeholder="Segundo apellido"
+                  formControlName="segundo_apellido" maxlength="255"
+                  [class.is-invalid]="
+                  this.FormularioDatosGeneralesExtrangero.controls['segundo_apellido'].status == 'INVALID' && this.FormularioDatosGeneralesExtrangero.controls['segundo_apellido'].touched">
+                <div class="texto-invalido"
+                  *ngIf="this.FormularioDatosGeneralesExtrangero.controls['segundo_apellido'].touched && this.FormularioDatosGeneralesExtrangero.controls['segundo_apellido'].status == 'INVALID'">
+                  <p>El segundo apellido es requerido</p>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="fecha_nacimiento" class="form-label">Fecha de nacimiento*:</label>
+                <div class="input-group">
+                  <input type="text" class="form-control" id="segundoapellido" placeholder="dd-mm-yyyy"
+                    formControlName="fecha_nacimiento"
+                    [class.is-invalid]="
+                     this.FormularioDatosGeneralesExtrangero.controls['fecha_nacimiento'].status == 'DISABLED' && this.FormularioDatosGeneralesExtrangero.controls['fecha_nacimiento'].touched">
+                  <sg-input-fecha (valorCambiado)="cambioFechaNacimiento($event)"></sg-input-fecha>
+                </div>
+                <div class="texto-invalido"
+                  *ngIf="this.FormularioDatosGeneralesExtrangero.controls['fecha_nacimiento'].touched && this.FormularioDatosGeneralesExtrangero.controls['fecha_nacimiento'].status == 'DISABLED'">
+                  <p>La fecha de nacimiento es requerida</p>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="contra" class="form-label">Correo electrónico*:</label>
+                <input type="text" class="form-control" id="contra" placeholder="ejemplo@outlook.com"
+                  formControlName="correo" maxlength="60" [class.is-invalid]="
+                    this.FormularioDatosGeneralesExtrangero.controls['correo'].status == 'INVALID' &&
+                    this.FormularioDatosGeneralesExtrangero.controls['correo'].touched">
+                <div class="texto-invalido"
+                  *ngIf="this.FormularioDatosGeneralesExtrangero.controls['correo'].touched && this.FormularioDatosGeneralesExtrangero.controls['correo'].status == 'INVALID'">
+                  <p *ngIf="this.FormularioDatosGeneralesExtrangero.get('correo')?.errors?.['required']">El correo es
+                    requerido</p>
+                  <p *ngIf="this.FormularioDatosGeneralesExtrangero.get('correo')?.errors?.['pattern']">El correo no
+                    tiene el formato requerido</p>
+                </div>
+
+              </div>
+
+              <div class="col-sm-6">
+                <label for="id_pais" class="form-label">País*:</label>
+
+                <select class="form-select" aria-label="Default select example" id="id_pais"
+                  aria-describedby="validationServer04Feedback" formControlName="id_pais"
+                  [class.is-invalid-select]="
+                      this.FormularioDatosGeneralesExtrangero.controls['id_pais'].touched  && this.FormularioDatosGeneralesExtrangero.controls['id_pais'].status == 'INVALID'
+                       ||
+                      ( this.FormularioDatosGeneralesExtrangero.controls['id_pais'].touched  && this.FormularioDatosGeneralesExtrangero.controls['id_pais'].status == 'INVALID' && this.FormularioDatosGeneralesExtrangero.controls['id_pais'].value == 0)">
+                  <option [value]="null" selected>Selecciona un país</option>
+                  <option *ngFor="let estado of listaPaises" [value]="estado.id">{{ estado.nombre }}</option>
+                </select>
+                <div class="texto-invalido"
+                  *ngIf="
+                this.FormularioDatosGeneralesExtrangero.controls['id_pais'].touched  && this.FormularioDatosGeneralesExtrangero.controls['id_pais'].status == 'INVALID'
+                 ||
+                ( this.FormularioDatosGeneralesExtrangero.controls['id_pais'].touched  && this.FormularioDatosGeneralesExtrangero.controls['id_pais'].status == 'INVALID' && this.FormularioDatosGeneralesExtrangero.controls['id_pais'].value == 0)">
+                  <p> El país es requerido</p>
+                </div>
+              </div>
+              <div class="col-sm-6">
+                <label for="cargo_profesion" class="form-label">Cargo o profesión*:</label>
+                <div style="display: flex;">
+                  <input type="text" class="form-control" id="nombre" placeholder="Cargo o profesión"
+                    formControlName="cargo_profesion" maxlength="250" [class.is-invalid]="
+                        this.FormularioDatosGeneralesExtrangero.controls['cargo_profesion'].status == 'INVALID' &&
+                        this.FormularioDatosGeneralesExtrangero.controls['cargo_profesion'].touched">
+                  <button title="Cargo o profesión de la persona que firmará las solicitudes"
+                    alt="Cargo o profesión de la persona que firmará las solicitudes"
+                    style="background-color: white; border: white;"><i class="bi bi-exclamation"></i></button>
+                </div>
+                <div class="texto-invalido"
+                  *ngIf="this.FormularioDatosGeneralesExtrangero.controls['cargo_profesion'].touched && this.FormularioDatosGeneralesExtrangero.controls['cargo_profesion'].status == 'INVALID'">
+                  <p>El cargo o profesión de la persona que firmará los documentos son requeridos</p>
+                </div>
+              </div>
+            </div>
+          </div>
+          <div class="col-sm-12 row" *ngIf="tipoPersona === tipoPersonaMoral"
+            [formGroup]="FormularioDatosGeneralesMoral">
+            <div class="col-sm-6">
+              <label for="nombre" class="form-label">Razón social:</label>
+              <input type="text" class="form-control" id="nombre" placeholder="empresa sa. de cv."
+                formControlName="razon_social" maxlength="250" [class.is-invalid]="
+                      this.FormularioDatosGeneralesMoral.controls['razon_social'].status == 'INVALID' &&
+                      this.FormularioDatosGeneralesMoral.controls['razon_social'].touched">
+              <div class="texto-invalido"
+                *ngIf="this.FormularioDatosGeneralesMoral.controls['razon_social'].touched && this.FormularioDatosGeneralesMoral.controls['razon_social'].status == 'INVALID'">
+                <p>La razón social es requerida</p>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <label for="contra" class="form-label">Correo electrónico*:</label>
+              <input type="text" class="form-control" id="contra" placeholder="ejemplo@outlook.com"
+                formControlName="correo" maxlength="60" [class.is-invalid]="
+                      this.FormularioDatosGeneralesMoral.controls['correo'].status == 'INVALID' &&
+                      this.FormularioDatosGeneralesMoral.controls['correo'].touched">
+              <div class="texto-invalido"
+                *ngIf="this.FormularioDatosGeneralesMoral.controls['correo'].touched && this.FormularioDatosGeneralesMoral.controls['correo'].status == 'INVALID'">
+                <p *ngIf="this.FormularioDatosGeneralesMoral.get('correo')?.errors?.['required']">El correo es requerido
+                </p>
+                <p *ngIf="this.FormularioDatosGeneralesMoral.get('correo')?.errors?.['pattern']">El correo no tiene
+                  el formato requerido</p>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <label for="Pais" class="form-label">País:</label>
+              <select class="form-select" aria-label="Default select example" id="id_pais"
+                aria-describedby="validationServer04Feedback" formControlName="id_pais" [class.is-invalid-select]="
+                      this.FormularioDatosGeneralesMoral.controls['id_pais'].touched  && (this.FormularioDatosGeneralesMoral.controls['id_pais'].status == 'INVALID'
+                      || this.FormularioDatosGeneralesMoral.controls['id_pais'].value == 0) ">
+                <option value="0" selected>Selecciona un país</option>
+                <option *ngFor="let estado of listaPaises" [value]="estado.id">{{ estado.nombre }}</option>
+              </select>
+              <div class="texto-invalido" *ngIf="this.FormularioDatosGeneralesMoral.controls['id_pais'].touched && (this.FormularioDatosGeneralesMoral.controls['id_pais'].status == 'INVALID'
+                    || this.FormularioDatosGeneralesMoral.controls['id_pais'].value == 0)">
+                <p> El país es requerido</p>
+              </div>
+            </div>
+            <div class="col-sm-6" *ngIf="FormularioEsNacional.get('es_nacional')?.value">
+              <label for="EntidadFederetiva" class="form-label">Entidad federativa:</label>
+              <select class="form-select" aria-label="Default select example" id="EntidadFederetiva"
+                aria-describedby="validationServer04Feedback" formControlName="id_estado" [class.is-invalid-select]="
+                                          this.FormularioDatosGeneralesMoral.controls['id_estado'].touched  && (this.FormularioDatosGeneralesMoral.controls['id_estado'].status == 'INVALID'
+                                          || this.FormularioDatosGeneralesMoral.controls['id_estado'].value == '0') ">
+                <option value="0" selected>Selecciona una entidad</option>
+                <option *ngFor="let estado of listaEstados" [value]="estado.id">{{ estado.nombre }}</option>
+              </select>
+              <div class="texto-invalido" *ngIf="this.FormularioDatosGeneralesMoral.controls['id_estado'].touched && (this.FormularioDatosGeneralesMoral.controls['id_estado'].status == 'INVALID'
+                                        || this.FormularioDatosGeneralesMoral.controls['id_estado'].value == '0')">
+                <p> La entidad federativa es requerida</p>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <label for="Remitente" class="form-label">Tipo de remitente:</label>
+              <ng-container *ngIf="escenario?.persona">
+                <select class="form-select" aria-label="Default select example" id="id_remitente"
+                  aria-describedby="validationServer04Feedback" formControlName="id_remitente">
+                  <option value="0">Selecciona un remitente</option>
+                  <ng-container *ngFor="let estado of listaRemitentes">
+                    <ng-container *ngIf="escenario?.persona.idRemitente === estado.id">
+                      <option [value]="estado.id" selected [selected]="true">{{ estado.nombre }}</option>
+                    </ng-container>
+                  </ng-container>
+                </select>
+              </ng-container>
+
+              <ng-container *ngIf="!escenario?.persona && escenario?.tipo != 'B'">
+                <select class="form-select" aria-label="Default select example" id="Remitente"
+                  formControlName="id_remitente" [class.is-invalid-select]="
+                  this.FormularioDatosGeneralesMoral.controls['id_remitente'].touched  && (this.FormularioDatosGeneralesMoral.controls['id_remitente'].status == 'INVALID'
+                  || this.FormularioDatosGeneralesMoral.controls['id_remitente'].value == '0')">
+                  <option value="0">Selecciona un tipo de remitente</option>
+                  <option *ngFor="let estado of listaRemitentes" [value]="estado.id">{{ estado.nombre }}</option>
+                </select>
+              </ng-container>
+
+              <ng-container *ngIf="escenario?.tipo == 'B'">
+                <select class="form-select" aria-label="Default select example" id="Remitente"
+                  formControlName="id_remitente">
+                  <option value="0">Selecciona un tipo de remitente</option>
+                  <option *ngFor="let estado of listaRemitentes" [value]="estado.id">{{ estado.nombre }}</option>
+                </select>
+              </ng-container>
+
+              <div class="texto-invalido" *ngIf="this.FormularioDatosGeneralesMoral.controls['id_remitente'].touched && (this.FormularioDatosGeneralesMoral.controls['id_remitente'].status == 'INVALID'
+              || this.FormularioDatosGeneralesMoral.controls['id_remitente'].value == '0')">
+                <p> El tipo de remitente es requerido</p>
+              </div>
+            </div>
+            <div class="col-sm-6">
+              <label for="Cargo" class="form-label">Cargo o profesión:</label>
+              <input type="text" class="form-control" id="nombre" placeholder="Cargo o profesión"
+                formControlName="cargo_profesion" maxlength="250" [class.is-invalid]="
+                      this.FormularioDatosGeneralesMoral.controls['cargo_profesion'].status == 'INVALID' &&
+                      this.FormularioDatosGeneralesMoral.controls['cargo_profesion'].touched">
+              <div class="texto-invalido"
+                *ngIf="this.FormularioDatosGeneralesMoral.controls['cargo_profesion'].touched && this.FormularioDatosGeneralesMoral.controls['cargo_profesion'].status == 'INVALID'">
+                <p>El cargo o profesión de la persona que firmará los documentos son requeridos</p>
+              </div>
+            </div>
+          </div>
+        </div>
+        <div class="card-body row" *ngIf="Indice == 2 && !this.habilitaLogin" [formGroup]="FormularioCuenta">
+          <div class="col-sm-6">
+            <label for="contra" class="form-label">Usuario*:</label>
+            <div style="display: flex;">
+              <input type="text" class="form-control" id="contra" placeholder="Usuario" formControlName="usuario"
+                maxlength="50" minlength="8" [class.is-invalid]="
+                this.FormularioCuenta.controls['usuario'].status == 'INVALID' &&
+                this.FormularioCuenta.controls['usuario'].touched" />
+              <button
+                title="El usuario debe tener mínimo 8 caracteres sin espacios y teniendo en cuenta que solo se aceptan como caracteres especiales _ * % $ # ! @ además de que éstos últimos no deberán agregarse al final"
+                alt="El usuario debe tener mínimo 8 caracteres sin espacios y teniendo en cuenta que solo se aceptan como caracteres especiales _ * % $ # ! @ además de que éstos últimos no deberán agregarse al final"
+                style="background-color: white; border: white;"><i class="bi bi-exclamation"></i></button>
+              <br>
+            </div>
+            <div class="texto-invalido"
+              *ngIf="this.FormularioCuenta.controls['usuario'].touched && this.FormularioCuenta.controls['usuario'].status == 'INVALID'">
+              <p> El nombre de usuario debe de contener ciertas características (Ver tooltip)</p>
+            </div>
+
+          </div>
+          <div class="col-sm-6"></div>
+
+          <div class="col-sm-6">
+            <label for="contra1" class="form-label">Contraseña*:</label>
+            <div class="input-group">
+              <input [type]="contra1?'text':'password'" class="form-control" id="contra1" placeholder="contraseña"
+                aria-label="Recipient's username" aria-describedby="basic-addon2" maxlength="20"
+                formControlName="contra1" [class.is-invalid]=" this.FormularioCuenta.controls['contra1'].status == 'INVALID' &&
+                                       this.FormularioCuenta.controls['contra1'].touched">
+              <span class="input-group-text" id="basic-addon2" (click)="verContra1()" style="cursor: pointer;">
+                <em [ngClass]="contra1?'bi bi-eye-slash':'bi bi-eye'"></em></span>
+              <button
+                title="La contraseña debe tener mínimo 12 caracteres dentro de los cuales es necesario registrar al menos: una mayúscula al inicio, un número y un carácter especial a escoger entre _*%$#!@ además de que estos últimos se deberán agregar al final."
+                alt="La contraseña debe tener mínimo 12 caracteres dentro de los cuales es necesario registrar al menos: una mayúscula al inicio, un número y un carácter especial a escoger entre _*%$#!@ además de que estos últimos se deberán agregar al final."
+                style="background-color: white; border: white;"><i class="bi bi-exclamation"></i></button>
+            </div>
+            <ng-container *ngIf="this.FormularioCuenta.controls['contra1'].status == 'INVALID' &&
+                                    this.FormularioCuenta.controls['contra1'].touched && password?.errors">
+              <p class="texto-invalido"> {{ password?.errors | formError }} </p>
+            </ng-container>
+          </div>
+
+          <div class="col-sm-6"></div>
+          <div class="col-sm-6">
+            <label for="contra2" class="form-label">Confirmar contraseña*:</label>
+            <div class="input-group">
+              <input [type]="contra2?'text':'password'" class="form-control" id="contra2" placeholder="contraseña"
+                maxlength="20" aria-label="Recipient's username" aria-describedby="basic-addon2"
+                formControlName="contra2" [class.is-invalid]=" this.FormularioCuenta.controls['contra2'].status == 'INVALID' &&
+                            this.FormularioCuenta.controls['contra2'].touched">
+              <span class="input-group-text" id="basic-addon2" (click)="verContra2()" style="cursor: pointer;"><em
+                  [ngClass]="contra2?'bi bi-eye-slash':'bi bi-eye'"></em></span>
+              <button
+                title="La contraseña debe contener máximo 12 caracteres dentro de los cuales se debe registrar al menos una mayúscula, un número y caracter especial a escoger entre los siguientes: _ * % $ # ! @"
+                alt="La contraseña debe contener máximo 12 caracteres dentro de los cuales se debe registrar al menos una mayúscula, un número y caracter especial a escoger entre los siguientes: _ * % $ # ! @"
+                style="background-color: white; border: white;"><i class="bi bi-exclamation"></i></button>
+            </div>
+            <div class="texto-invalido" *ngIf="this.FormularioCuenta.controls['contra2'].status == 'INVALID' && this.FormularioCuenta.controls['contra2'].touched 
+                                                && this.FormularioCuenta.controls['contra2'].value == ''">
+              <p> La confirmación de contraseña es requerida. </p>
+            </div>
+            <div class="texto-invalido" *ngIf="this.FormularioCuenta.controls['contra2'].status == 'INVALID' && this.FormularioCuenta.controls['contra2'].touched 
+                                                && this.FormularioCuenta.controls['contra2'].value != this.FormularioCuenta.controls['contra1'].value 
+                                                && this.FormularioCuenta.controls['contra2'].value != '' ">
+              <p> La confirmación de contraseña no coincide. </p>
+            </div>
+
+          </div>
+        </div>
+        <div class="card-body row" *ngIf="Indice == 2 && this.habilitaLogin" [formGroup]="FormularioCuenta">
+          <p>
+            <ng-container *ngIf="direccion === 1">
+              {{siguiente()}}
+            </ng-container>
+            <ng-container *ngIf="direccion === -1">
+              {{atras()}}
+            </ng-container>
+          </p>
+        </div>
+
+        <div class="card-body row" *ngIf="Indice == 3">
+          <div class="col-sm-12 row" *ngIf="tipoPersona === tipoPersonaFisica">
+            <div class="col-sm-6">
+              <label for="rfc" class="form-label">RFC:</label>
+              <input type="text" class="form-control" id="rfc" placeholder="RFC" disabled
+                [value]="FormularioFirmaElectronica.get('firma')?.value?FormularioConfirma.get('rfc')?.value:FormularioSinFirma.get('rfc')?.value">
+            </div>
+            <div class="col-sm-6" *ngIf="FormularioEsNacional.get('es_nacional')?.value">
+              <label for="curp" class="form-label">CURP:</label>
+              <input type="text" class="form-control" id="curp" placeholder="CURP" disabled
+                [value]="FormularioEsNacional.get('es_nacional')?.value?FormularioDatosGeneralesNacional.get('curp')?.value:''">
+            </div>
+            <div class="col-sm-6">
+              <label for="contra" class="form-label">Usuario:</label>
+              <input type="text" class="form-control" id="contra" placeholder="Usuario" disabled
+                [value]="FormularioCuenta.get('usuario')?.value">
+            </div>
+            <div class="col-sm-6">
+              <label for="nombre" class="form-label">Nombre:</label>
+              <input type="text" class="form-control" id="nombre" placeholder="Nombre" disabled
+                [value]="FormularioEsNacional.get('es_nacional')?.value?FormularioDatosGeneralesNacional.get('nombre')?.value:FormularioDatosGeneralesExtrangero.get('nombre')?.value">
+            </div>
+            <div class="col-sm-6">
+              <label for="primerapellido" class="form-label">Primer apellido:</label>
+              <input type="text" class="form-control" id="primerapellido" placeholder="Primer apellido" disabled
+                [value]="FormularioEsNacional.get('es_nacional')?.value?FormularioDatosGeneralesNacional.get('primer_apellido')?.value:FormularioDatosGeneralesExtrangero.get('primer_apellido')?.value">
+            </div>
+            <div class="col-sm-6">
+              <label for="segundoapellido" class="form-label">Segundo apellido:</label>
+              <input type="text" class="form-control" id="segundoapellido" placeholder="Segundo apellido" disabled
+                [value]="FormularioEsNacional.get('es_nacional')?.value?FormularioDatosGeneralesNacional.get('segundo_apellido')?.value:FormularioDatosGeneralesExtrangero.get('segundo_apellido')?.value">
+            </div>
+            <div class="col-sm-6">
+              <label for="contra" class="form-label">Correo electrónico:</label>
+              <input type="text" class="form-control" id="contra" placeholder="correo electrónico" disabled
+                [value]="FormularioEsNacional.get('es_nacional')?.value?FormularioDatosGeneralesNacional.get('correo')?.value:FormularioDatosGeneralesExtrangero.get('correo')?.value">
+            </div>
+            <div class="col-sm-6" *ngIf="FormularioEsNacional.get('es_nacional')?.value">
+              <label for="EntidadFederetiva" class="form-label">Entidad federativa:</label>
+              <select class="form-select" aria-label="Default select example" id="EntidadFederetiva" disabled>
+                <option *ngFor="let estado of listaEstados" [value]="estado.id"
+                  [selected]="estado.id == FormularioDatosGeneralesNacional.get('id_estado')?.value">
+                  {{ estado.nombre }}</option>
+              </select>
+            </div>
+            <div class="col-sm-6">
+              <label for="Pais" class="form-label">País:</label>
+              <select class="form-select" aria-label="Default select example" id="Pais" disabled>
+                <option *ngFor="let pais of listaPaises" [value]="pais.id"
+                  [selected]="pais.id == ((FormularioEsNacional.get('es_nacional')?.value)?(FormularioDatosGeneralesNacional.get('id_pais')?.value):(FormularioDatosGeneralesExtrangero.get('id_pais')?.value))">
+                  {{ pais.nombre }}</option>
+              </select>
+            </div>
+            <div class="col-sm-6">
+              <label for="cargo" class="form-label">Cargo o profesión:</label>
+              <input type="text" class="form-control" id="cargo" placeholder="Cargo" disabled
+                [value]="FormularioEsNacional.get('es_nacional')?.value?FormularioDatosGeneralesNacional.get('cargo_profesion')?.value:FormularioDatosGeneralesExtrangero.get('cargo_profesion')?.value">
+            </div>
+          </div>
+          <div class="col-sm-12 row" *ngIf="tipoPersona === tipoPersonaMoral">
+            <div class="col-sm-6">
+              <label for="rfc" class="form-label">RFC:</label>
+              <input type="text" class="form-control" id="rfc" placeholder="RFC" disabled
+                [value]="FormularioFirmaElectronica.get('firma')?.value?FormularioConfirma.get('rfc')?.value:FormularioSinFirma.get('rfc')?.value">
+            </div>
+            <div class="col-sm-6">
+              <label for="usuario" class="form-label">Usuario:</label>
+              <input type="text" class="form-control" id="usuario" placeholder="usuario" disabled
+                [value]="FormularioCuenta.get('usuario')?.value">
+            </div>
+            <div class="col-sm-6">
+              <label for="nombre" class="form-label">Razón social:</label>
+              <input type="text" class="form-control" id="nombre" placeholder="empresa sa. de cv." disabled
+                [value]="FormularioDatosGeneralesMoral.get('razon_social')?.value">
+            </div>
+            <div class="col-sm-6">
+              <label for="correo" class="form-label">Correo electrónico:</label>
+              <input type="text" class="form-control" id="correo" placeholder="juan.perez@outlook.com" disabled
+                [value]="FormularioDatosGeneralesMoral.get('correo')?.value">
+            </div>
+            <div class="col-sm-6">
+              <label for="Pais" class="form-label">País:</label>
+              <select class="form-select" aria-label="Default select example" id="Pais" disabled>
+                <option *ngFor="let pais of listaPaises" [value]="pais.id"
+                  [selected]="pais.id == FormularioDatosGeneralesMoral.get('id_pais')?.value">{{ pais.nombre }}
+                </option>
+              </select>
+            </div>
+            <div class="col-sm-6">
+              <label for="Remitente" class="form-label">Tipo de remitente:</label>
+              <select class="form-select" aria-label="Default select example" id="Remitente" disabled>
+                <ng-container *ngFor="let remitente of listaRemitentes">
+                  <option *ngIf="this.datosRegistro.id_remitente == remitente.id" [value]="remitente.id">{{
+                    remitente.nombre }}</option>
+                </ng-container>
+              </select>
+            </div>
+            <div class="col-sm-6">
+              <label for="cargo" class="form-label">Cargo o profesión:</label>
+              <input type="text" class="form-control" id="cargo" placeholder="Cargo" disabled
+                [value]="FormularioDatosGeneralesMoral.get('cargo_profesion')?.value">
+            </div>
+          </div>
+          <div class="alert alert-info valoresCentrados" role="alert">
+            Verifique que la información sea correcta.
+          </div>
+        </div>
+        <div class="card-body row" *ngIf="Indice == 4">
+          <div class="alert alert-success valoresCentrados" role="alert">
+            <p>Se envió un correo de confirmación a: <span style="font-weight: bolder;">{{datosRegistro.correo}}</span>
+              , en él se indicarán las acciones a realizar para concluir tu registro.</p>
+            <p>Asegúrate de revisar tu bandeja de spam, en caso de no verlo en tu bandeja de entrada.</p>
+
+          </div>
+        </div>
+      </div>
+    </div>
+  </div>
+
+  <div class="col-md-12" style=" margin-bottom: 10px; ">
+    <button class="btn btn-secundary boton-izquierdo" (click)="atras()"
+      *ngIf="Indice > 0 && Indice != IndiceMax">Regresar</button>
+    <button class="btn btn-primary boton-derecho" (click)="siguiente()"
+      *ngIf="listaPasos.length >= 0 && (Indice < (listaPasos.length-1) ||  Indice == 0) ">Siguiente</button>
+    <button class="btn btn-primary boton-derecho" (click)="siguiente()"
+      *ngIf="Indice == 3 &&  listaPasos.length > 0">Enviar registro</button>
+    <button class="btn btn-primary boton-derecho" (click)="confirmar()"
+      *ngIf="Indice == IndiceMax && listaPasos.length > 0">Ir al inicio</button>
+  </div>
+</div>
+
+
+<sg-spinner *ngIf="visualizarSpenner"></sg-spinner>

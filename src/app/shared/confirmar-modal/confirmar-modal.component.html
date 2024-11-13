@@ -1,0 +1,11 @@
+
+<div class="modal-header valoresCentrados">
+    <strong>{{ textoPergunta }}</strong>
+</div>
+<div class="modal-body valoresCentrados" *ngIf="textoCuerpoHtml != ''">
+    <div [innerHTML]="textoHtml"></div>
+</div>
+<div class="modal-footer valoresCentrados">
+    <button type="button" class="btn btn-positivo-modal" (click)="closeModal(true)">{{ textoBotonAceptar }}</button>
+    <button type="button" class="btn btn-negativo-modal" (click)="closeModal(false)">{{ textoBotonRechazar }}</button>
+</div>
